@@ -87,7 +87,6 @@ def trainer_delete(request, pk):
 def group_list(request):
     user = request.user
     if user.is_admin():
-        qs = Group.objects.select_related('trainer').annotate(count=Athlete.objects.filter(group=None).count.__class__())
         qs = Group.objects.select_related('trainer').all()
     else:
         trainer = None
