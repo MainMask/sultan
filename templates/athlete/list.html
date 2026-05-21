@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Атлеты{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0"><i class="bi bi-person-running me-2"></i>Атлеты</h1>
+    <a href="{% url 'athlete_create' %}" class="btn btn-warning"><i class="bi bi-plus-circle me-1"></i>Добавить</a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-6">
+                <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Поиск по ФИО...">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Найти</button>
+            </div>
+            {% if q %}<div class="col-auto"><a href="{% url 'athlete_list' %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle"></i></a></div>{% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover table-sm mb-0 align-middle">
+            <thead class="table-light">
+                <tr><th>ФИО</th><th>Дата рождения</th><th>Группа</th><th>Тренер</th><th>Зачислен</th><th>Действия</th></tr>
+            </thead>
+            <tbody>
+                {% for a in page_obj %}
+                <tr>
+                    <td><a href="{% url 'athlete_detail' a.pk %}" class="fw-semibold text-decoration-none">{{ a.full_name }}</a></td>
+                    <td>{{ a.birth_date|date:"d.m.Y"|default:"—" }}</td>
+                    <td>{{ a.group.name|default:"—" }}</td>
+                    <td>{{ a.trainer.full_name|default:"—" }}</td>
+                    <td>{{ a.enrolled_at|date:"d.m.Y"|default:"—" }}</td>
+                    <td>
+                        <a href="{% url 'athlete_detail' a.pk %}" class="btn btn-sm btn-outline-info py-0 px-1"><i class="bi bi-eye"></i></a>
+                        <a href="{% url 'athlete_edit' a.pk %}" class="btn btn-sm btn-outline-secondary py-0 px-1"><i class="bi bi-pencil"></i></a>
+                        <a href="{% url 'athlete_delete' a.pk %}" class="btn btn-sm btn-outline-danger py-0 px-1"><i class="bi bi-trash"></i></a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center text-muted py-4">Атлетов нет</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if page_obj.has_other_pages %}
+    <div class="card-footer d-flex justify-content-center">
+        <nav><ul class="pagination pagination-sm mb-0">
+            {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ q }}">&laquo;</a></li>{% endif %}
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ q }}">&raquo;</a></li>{% endif %}
+        </ul></nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

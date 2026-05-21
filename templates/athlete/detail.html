@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}{{ athlete.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0"><i class="bi bi-person me-2"></i>{{ athlete.full_name }}</h1>
+    {% if user.role != 'athlete' %}
+    <div class="d-flex gap-2">
+        <a href="{% url 'athlete_edit' athlete.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil me-1"></i>Редактировать</a>
+        <a href="{% url 'training_create' %}" class="btn btn-warning btn-sm"><i class="bi bi-plus-circle me-1"></i>Добавить тренировку</a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-header"><strong>Данные атлета</strong></div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-5">Дата рождения</dt>
+                    <dd class="col-sm-7">{{ athlete.birth_date|date:"d.m.Y"|default:"—" }}</dd>
+                    <dt class="col-sm-5">Группа</dt>
+                    <dd class="col-sm-7">{{ athlete.group.name|default:"—" }}</dd>
+                    <dt class="col-sm-5">Тренер</dt>
+                    <dd class="col-sm-7">{{ athlete.trainer.full_name|default:"—" }}</dd>
+                    <dt class="col-sm-5">Зачислен</dt>
+                    <dd class="col-sm-7">{{ athlete.enrolled_at|date:"d.m.Y"|default:"—" }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Последние тренировки</strong>
+                <a href="{% url 'training_list' %}?athlete={{ athlete.pk }}" class="btn btn-sm btn-outline-primary">Все</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-sm mb-0">
+                    <thead class="table-light">
+                        <tr><th>Дата</th><th>Упражнение</th><th>Подх.</th><th>Повт.</th><th>Вес</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for t in trainings %}
+                        <tr>
+                            <td>{{ t.date|date:"d.m.Y" }}</td>
+                            <td>{{ t.exercise.name }}</td>
+                            <td>{{ t.sets|default:"—" }}</td>
+                            <td>{{ t.reps|default:"—" }}</td>
+                            <td>{{ t.weight|default:"—" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-3">Нет тренировок</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex gap-2">
+    <a href="{% url 'athlete_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i>К списку</a>
+    <a href="{% url 'reports:report_create' %}?athlete={{ athlete.pk }}" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-bar-graph me-1"></i>Создать отчёт</a>
+</div>
+{% endblock %}

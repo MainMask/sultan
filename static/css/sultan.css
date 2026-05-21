@@ -1,0 +1,85 @@
+/* SULTAN — Кастомные стили */
+
+:root {
+    --sultan-primary: #1F4E79;
+    --sultan-accent: #FFC107;
+}
+
+body {
+    min-width: 1280px;
+    font-size: 0.9rem;
+}
+
+.navbar-brand {
+    font-size: 1.3rem;
+    letter-spacing: 0.05em;
+}
+
+/* Компактные таблицы */
+.table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Карточки статистики */
+.card .fs-2 {
+    font-size: 2rem !important;
+    line-height: 1;
+}
+
+/* Формы */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+/* Кнопки действий в таблицах */
+.btn-xs {
+    padding: 0.1rem 0.3rem;
+    font-size: 0.75rem;
+}
+
+/* Бейджи ролей */
+.badge {
+    font-size: 0.75rem;
+}
+
+/* Активный пункт навигации */
+.navbar .nav-link.active {
+    color: var(--sultan-accent) !important;
+    font-weight: 600;
+}
+
+/* Пагинация */
+.pagination-sm .page-link {
+    min-width: 32px;
+    text-align: center;
+}
+
+/* Flash-сообщения */
+.alert {
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Заблокированные строки */
+.table tr.locked {
+    opacity: 0.7;
+    background-color: #fff3cd;
+}
+
+/* Footer */
+footer {
+    font-size: 0.78rem;
+}
+
+/* Скролл для широких таблиц */
+.table-responsive {
+    min-height: 0;
+}

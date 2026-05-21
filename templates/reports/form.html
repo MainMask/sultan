@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ report_type_label }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-6">
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-file-earmark-bar-graph me-2"></i>{{ report_type_label }}</h5>
+    </div>
+    <div class="card-body">
+        {% if user.role != 'athlete' %}
+        <div class="mb-3">
+            <label class="form-label small text-muted">Тип отчёта:</label>
+            <div class="btn-group btn-group-sm w-100" role="group">
+                <a href="?type=group" class="btn {% if report_type == 'group' %}btn-primary{% else %}btn-outline-primary{% endif %}">Групповой</a>
+                <a href="?type=individual" class="btn {% if report_type == 'individual' %}btn-success{% else %}btn-outline-success{% endif %}">Индивидуальный</a>
+                <a href="?type=attendance" class="btn {% if report_type == 'attendance' %}btn-info{% else %}btn-outline-info{% endif %}">Посещаемость</a>
+                <a href="?type=personal" class="btn {% if report_type == 'personal' %}btn-warning{% else %}btn-outline-warning{% endif %}">Личный</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">{% for e in form.non_field_errors %}{{ e }}{% endfor %}</div>
+            {% endif %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}{% if field.field.required %} <span class="text-danger">*</span>{% endif %}</label>
+                {{ field }}
+                {% if field.errors %}<div class="text-danger small mt-1">{% for e in field.errors %}{{ e }}{% endfor %}</div>{% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-warning">
+                    <i class="bi bi-file-earmark-excel me-1"></i>Сформировать Excel
+                </button>
+                <a href="{% url 'reports:report_list' %}" class="btn btn-outline-secondary">Отмена</a>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}

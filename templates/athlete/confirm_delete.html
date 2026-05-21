@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Удаление атлета{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-5">
+<div class="card border-danger">
+    <div class="card-header bg-danger text-white"><h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Удаление атлета</h5></div>
+    <div class="card-body">
+        <p>Удалить атлета <strong>{{ athlete.full_name }}</strong>?</p>
+        <p class="text-danger small">Все тренировки этого атлета будут удалены.</p>
+        <div class="d-flex gap-2">
+            <form method="post">{% csrf_token %}<button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Удалить</button></form>
+            <a href="{% url 'athlete_list' %}" class="btn btn-outline-secondary">Отмена</a>
+        </div>
+    </div>
+</div>
+</div></div>
+{% endblock %}

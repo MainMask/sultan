@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% block title %}Тренировки{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h4 mb-0"><i class="bi bi-activity me-2"></i>Тренировки</h1>
+    {% if user.role != 'athlete' %}
+    <a href="{% url 'training_create' %}" class="btn btn-warning">
+        <i class="bi bi-plus-circle me-1"></i>Добавить
+    </a>
+    {% endif %}
+</div>
+
+<div class="card mb-3">
+    <div class="card-body py-2">
+        <form method="get" class="row g-2 align-items-end">
+            {% if user.role != 'athlete' %}
+            <div class="col-md-3">
+                <label class="form-label small mb-1">{{ filter_form.athlete.label }}</label>
+                {{ filter_form.athlete }}
+            </div>
+            {% endif %}
+            <div class="col-md-3">
+                <label class="form-label small mb-1">{{ filter_form.exercise.label }}</label>
+                {{ filter_form.exercise }}
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">{{ filter_form.date_from.label }}</label>
+                {{ filter_form.date_from }}
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small mb-1">{{ filter_form.date_to.label }}</label>
+                {{ filter_form.date_to }}
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Фильтр</button>
+            </div>
+            {% if request.GET %}
+            <div class="col-auto">
+                <a href="{% url 'training_list' %}" class="btn btn-outline-secondary"><i class="bi bi-x-circle me-1"></i>Сбросить</a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover table-sm mb-0 align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Дата</th>
+                    {% if user.role != 'athlete' %}<th>Атлет</th>{% endif %}
+                    <th>Упражнение</th><th>Тип</th><th>Подх.</th><th>Повт.</th>
+                    <th>Вес (кг)</th><th>Длит. (мин)</th><th>Комментарий</th><th>Статус</th>
+                    {% if user.role != 'athlete' %}<th>Действия</th>{% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in page_obj %}
+                <tr>
+                    <td><a href="{% url 'training_detail' t.pk %}">{{ t.date|date:"d.m.Y" }}</a></td>
+                    {% if user.role != 'athlete' %}
+                    <td>{{ t.athlete.full_name }}</td>
+                    {% endif %}
+                    <td>{{ t.exercise.name }}</td>
+                    <td><span class="badge bg-light text-dark">{{ t.exercise.get_load_type_display }}</span></td>
+                    <td>{{ t.sets|default:"—" }}</td>
+                    <td>{{ t.reps|default:"—" }}</td>
+                    <td>{{ t.weight|default:"—" }}</td>
+                    <td>{{ t.duration|default:"—" }}</td>
+                    <td class="text-truncate" style="max-width:150px;" title="{{ t.comment }}">{{ t.comment|default:"—" }}</td>
+                    <td>
+                        {% if t.is_locked %}
+                        <span class="badge bg-danger"><i class="bi bi-lock-fill"></i></span>
+                        {% else %}
+                        <span class="badge bg-success"><i class="bi bi-unlock-fill"></i></span>
+                        {% endif %}
+                    </td>
+                    {% if user.role != 'athlete' %}
+                    <td>
+                        {% if not t.is_locked or user.role == 'admin' %}
+                        <a href="{% url 'training_edit' t.pk %}" class="btn btn-xs btn-outline-secondary btn-sm py-0 px-1">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        {% endif %}
+                        {% if user.role == 'admin' and t.is_locked %}
+                        <form method="post" action="{% url 'training_unlock' t.pk %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-outline-warning py-0 px-1" title="Разблокировать">
+                                <i class="bi bi-unlock"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if not t.is_locked or user.role == 'admin' %}
+                        <a href="{% url 'training_delete' t.pk %}" class="btn btn-sm btn-outline-danger py-0 px-1">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                        {% endif %}
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr><td colspan="11" class="text-center text-muted py-4">Нет тренировок</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if page_obj.has_other_pages %}
+    <div class="card-footer d-flex justify-content-center">
+        <nav><ul class="pagination pagination-sm mb-0">
+            {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}">&laquo;</a></li>
+            {% endif %}
+            <li class="page-item active"><span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span></li>
+            {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% for k,v in request.GET.items %}{% if k != 'page' %}&{{ k }}={{ v }}{% endif %}{% endfor %}">&raquo;</a></li>
+            {% endif %}
+        </ul></nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

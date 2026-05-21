@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Удаление тренировки{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+<div class="col-lg-5">
+<div class="card border-danger">
+    <div class="card-header bg-danger text-white">
+        <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Подтверждение удаления</h5>
+    </div>
+    <div class="card-body">
+        <p>Вы уверены, что хотите удалить тренировку:</p>
+        <ul>
+            <li><strong>Атлет:</strong> {{ training.athlete.full_name }}</li>
+            <li><strong>Упражнение:</strong> {{ training.exercise.name }}</li>
+            <li><strong>Дата:</strong> {{ training.date|date:"d.m.Y" }}</li>
+        </ul>
+        <p class="text-danger">Это действие необратимо.</p>
+        <div class="d-flex gap-2">
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i>Удалить</button>
+            </form>
+            <a href="{% url 'training_list' %}" class="btn btn-outline-secondary">Отмена</a>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
