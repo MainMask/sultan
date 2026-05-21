@@ -36,7 +36,7 @@ async def main():
     dp.include_router(router)
 
     logging.info('Запуск SULTAN Telegram-бота...')
-    await dp.start_polling(bot)
+    await dp.start_polling(bot, drop_pending_updates=True)
 
 
 if __name__ == '__main__':
