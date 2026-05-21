@@ -16,6 +16,12 @@ from django.db.models import Sum, Count
 from core.models import User, Athlete, Trainer, Training
 from bot.keyboards import main_menu_trainer, main_menu_athlete
 
+MONTHS_RU = {
+    1: 'январь', 2: 'февраль', 3: 'март', 4: 'апрель',
+    5: 'май', 6: 'июнь', 7: 'июль', 8: 'август',
+    9: 'сентябрь', 10: 'октябрь', 11: 'ноябрь', 12: 'декабрь',
+}
+
 router = Router()
 
 
@@ -194,6 +200,7 @@ async def cmd_stats(message: Message):
         return
 
     today = timezone.localdate()
+    month_label = f'{MONTHS_RU[today.month]} {today.year}'
 
     if user.is_athlete():
         if not user.linked_to:
@@ -203,7 +210,7 @@ async def cmd_stats(message: Message):
         cnt = stats['cnt'] or 0
         dur = stats['total_duration'] or 0
         await message.answer(
-            f'📊 <b>Статистика за {today.strftime("%B %Y")}:</b>\n\n'
+            f'📊 <b>Статистика за {month_label}:</b>\n\n'
             f'🏋️ Тренировок: <b>{cnt}</b>\n'
             f'⏱ Общее время: <b>{dur} мин</b>'
         )
@@ -213,7 +220,7 @@ async def cmd_stats(message: Message):
             return
         athletes_count, trainings_count = await get_trainer_month_stats(user.linked_to)
         await message.answer(
-            f'📊 <b>Статистика за {today.strftime("%B %Y")}:</b>\n\n'
+            f'📊 <b>Статистика за {month_label}:</b>\n\n'
             f'👥 Атлетов: <b>{athletes_count}</b>\n'
             f'🏋️ Тренировок в этом месяце: <b>{trainings_count}</b>'
         )
