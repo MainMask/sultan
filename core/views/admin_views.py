@@ -4,7 +4,7 @@ from django.db import transaction
 from django.core.paginator import Paginator
 
 from core.models import User, Trainer, Group, Athlete
-from core.forms import UserCreateForm, TrainerForm, GroupForm
+from core.forms import UserCreateForm, UserEditForm, TrainerForm, GroupForm
 from core.decorators import admin_required, trainer_required
 
 
@@ -25,6 +25,18 @@ def user_create(request):
         messages.success(request, 'Пользователь создан')
         return redirect('user_list')
     return render(request, 'admin_panel/user_form.html', {'form': form, 'title': 'Создать пользователя'})
+
+
+@admin_required
+def user_edit(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    form = UserEditForm(request.POST or None, instance=user)
+    if request.method == 'POST' and form.is_valid():
+        with transaction.atomic():
+            form.save()
+        messages.success(request, f'Пользователь {user.username} обновлён')
+        return redirect('user_list')
+    return render(request, 'admin_panel/user_form.html', {'form': form, 'title': f'Редактировать: {user.username}', 'obj': user})
 
 
 @admin_required

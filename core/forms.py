@@ -205,6 +205,39 @@ class UserCreateForm(forms.ModelForm):
         return user
 
 
+class UserEditForm(forms.ModelForm):
+    new_password = forms.CharField(
+        label='Новый пароль',
+        required=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Оставьте пустым, чтобы не менять'}),
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'role', 'linked_to', 'is_active']
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+            'role': forms.Select(attrs={'class': 'form-select'}),
+            'linked_to': forms.NumberInput(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+        labels = {
+            'username': 'Логин',
+            'role': 'Роль',
+            'linked_to': 'ID тренера/атлета (для привязки Telegram: tg_<id>)',
+            'is_active': 'Активен',
+        }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        pw = self.cleaned_data.get('new_password')
+        if pw:
+            user.set_password(pw)
+        if commit:
+            user.save()
+        return user
+
+
 class TrainingFilterForm(forms.Form):
     athlete = forms.ModelChoiceField(
         queryset=Athlete.objects.all(),

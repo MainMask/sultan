@@ -13,7 +13,7 @@ from core.views.athlete_views import (
     athlete_detail, athlete_delete,
 )
 from core.views.admin_views import (
-    user_list, user_create, user_delete,
+    user_list, user_create, user_edit, user_delete,
     trainer_list, trainer_create, trainer_edit, trainer_delete,
     group_list, group_create, group_edit, group_delete,
 )
@@ -60,5 +60,6 @@ urlpatterns = [
     # Пользователи (admin)
     path('users/', user_list, name='user_list'),
     path('users/add/', user_create, name='user_create'),
+    path('users/<int:pk>/edit/', user_edit, name='user_edit'),
     path('users/<int:pk>/delete/', user_delete, name='user_delete'),
 ]
